@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
+    "gsap": "^3.12.5",
     "three": "^0.167.0",
     "three-stdlib": "^2.30.5",
     "vue": "^3.4.31"
