@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
 import { onMounted, ref } from "vue";
 import gsap from "gsap";
@@ -110,10 +110,15 @@ onMounted(() => {
 
   const { array } = plane.geometry.attributes.position;
   for (let i = 0; i < array.length; i += 3) {
-    const x = array[i ];
+    const x = array[i];
+    const y = array[i + 1];
     const z = array[i + 2];
+    array[i] = x + (Math.random() - 0.5);
+    array[i + 1] = y + (Math.random() - 0.5);
     array[i + 2] = z + Math.random();
   }
+  plane.geometry.attributes.position.originalPosition =
+    plane.geometry.attributes.position.array;
 
   const colors = [];
   for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
@@ -141,10 +146,18 @@ onMounted(() => {
   };
 
   // Animation loop
+  let frame = 0;
   const animate = () => {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
     rayCaster.setFromCamera(mouse, camera);
+    frame += 0.01;
+    const { array, originalPosition, needsUpdate } =
+      plane.geometry.attributes.position;
+    for (let i = 0; i < array.length; i += 3) {
+      array[i] = originalPosition[i] + Math.cos(frame) * 0.003;
+    }
+    plane.geometry.attributes.position.needsUpdate = true;
 
     const intersects = rayCaster.intersectObject(plane);
 
